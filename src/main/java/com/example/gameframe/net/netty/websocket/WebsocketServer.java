@@ -1,4 +1,4 @@
-package com.example.gameframe.net.netty;
+package com.example.gameframe.net.netty.websocket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -11,11 +11,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 
-public class DiscardServer {
+public class WebsocketServer {
     
     private int port;
     
-    public DiscardServer(int port) {
+    public WebsocketServer(int port) {
         this.port = port;
     }
     
@@ -26,16 +26,20 @@ public class DiscardServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
-             .childHandler(new ChannelInitializer<SocketChannel>() {
-                 @Override
-                 public void initChannel(SocketChannel ch) throws Exception {
-                     
-             		ch.pipeline().addLast(new HttpServerCodec());
-             		ch.pipeline().addLast(new HttpObjectAggregator(65536));
-
-             		ch.pipeline().addLast(new DiscardServerHandler());
-                 }
-             })
+             .childHandler(
+                            //放入模版channel
+                            new ChannelInitializer<SocketChannel>() 
+                            {
+                                @Override
+                                public void initChannel(SocketChannel ch) throws Exception {
+                                    //加入解码器 
+                                    ch.pipeline().addLast(new HttpServerCodec());
+                                    //设置请求长度
+                                    ch.pipeline().addLast(new HttpObjectAggregator(65536));
+                                    //放入请求处理器
+                                    ch.pipeline().addLast(new WebsocketServerHandler());
+                                }
+                            })
              .option(ChannelOption.SO_BACKLOG, 128)         
              .childOption(ChannelOption.SO_KEEPALIVE, true);
     
@@ -60,6 +64,6 @@ public class DiscardServer {
             port = 8888;
         }
         System.out.println("start");
-        new DiscardServer(port).run();
+        new WebsocketServer(port).run();
     }
 }
