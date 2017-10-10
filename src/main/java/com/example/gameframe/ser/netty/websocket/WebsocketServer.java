@@ -1,4 +1,4 @@
-package com.example.gameframe.net.netty.http;
+package com.example.gameframe.ser.netty.websocket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -8,21 +8,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
-/**
- * http有丰富的引擎，
- * 例如spring mvc的数据解析和注入已经非常丰富了，
- * 不需要这样的net层来管理请求和处理数据
- * 
- * @author zoodoz
- *
- */
-public class HttpServer {
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+
+public class WebsocketServer {
     
     private int port;
     
-    public HttpServer(int port) {
+    public WebsocketServer(int port) {
         this.port = port;
     }
     
@@ -39,12 +32,12 @@ public class HttpServer {
                             {
                                 @Override
                                 public void initChannel(SocketChannel ch) throws Exception {
-                                    // server端发送的是httpResponse，所以要使用HttpResponseEncoder进行编码
-                                    ch.pipeline().addLast(new HttpResponseEncoder());
-                                    // server端接收到的是httpRequest，所以要使用HttpRequestDecoder进行解码
-                                    ch.pipeline().addLast(new HttpRequestDecoder());
+                                    //加入解码器 
+                                    ch.pipeline().addLast(new HttpServerCodec());
+                                    //设置请求长度
+                                    ch.pipeline().addLast(new HttpObjectAggregator(65536));
                                     //放入请求处理器
-                                    ch.pipeline().addLast(new HttpServerHandler());
+                                    ch.pipeline().addLast(new WebsocketServerHandler());
                                 }
                             })
              .option(ChannelOption.SO_BACKLOG, 128)         
@@ -71,6 +64,6 @@ public class HttpServer {
             port = 8888;
         }
         System.out.println("start");
-        new HttpServer(port).run();
+        new WebsocketServer(port).run();
     }
 }

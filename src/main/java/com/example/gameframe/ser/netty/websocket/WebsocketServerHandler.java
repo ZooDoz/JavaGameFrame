@@ -1,4 +1,4 @@
-package com.example.gameframe.net.netty.websocket;
+package com.example.gameframe.ser.netty.websocket;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;

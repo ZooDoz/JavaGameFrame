@@ -1,4 +1,4 @@
-package com.example.gameframe.net.netty.discard;
+package com.example.gameframe.ser.netty.http;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -8,15 +8,21 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 /**
- * 这是一个discard示例
+ * http有丰富的引擎，
+ * 例如spring mvc的数据解析和注入已经非常丰富了，
+ * 不需要这样的net层来管理请求和处理数据
+ * 
+ * @author zoodoz
+ *
  */
-public class DiscardServer {
+public class HttpServer {
     
     private int port;
     
-    public DiscardServer(int port) {
+    public HttpServer(int port) {
         this.port = port;
     }
     
@@ -27,14 +33,20 @@ public class DiscardServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
-             .childHandler(new ChannelInitializer<SocketChannel>()
-            {
-                 @Override
-                 public void initChannel(SocketChannel ch) throws Exception
-                {
-             		ch.pipeline().addLast(new DiscardServerHandler());
-                }
-            })
+             .childHandler(
+                            //放入模版channel
+                            new ChannelInitializer<SocketChannel>() 
+                            {
+                                @Override
+                                public void initChannel(SocketChannel ch) throws Exception {
+                                    // server端发送的是httpResponse，所以要使用HttpResponseEncoder进行编码
+                                    ch.pipeline().addLast(new HttpResponseEncoder());
+                                    // server端接收到的是httpRequest，所以要使用HttpRequestDecoder进行解码
+                                    ch.pipeline().addLast(new HttpRequestDecoder());
+                                    //放入请求处理器
+                                    ch.pipeline().addLast(new HttpServerHandler());
+                                }
+                            })
              .option(ChannelOption.SO_BACKLOG, 128)         
              .childOption(ChannelOption.SO_KEEPALIVE, true);
     
@@ -44,8 +56,6 @@ public class DiscardServer {
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
-            
-            // 等待channel的close被调用，如果没有就不会阻塞，直接向下执行，关闭thread，结束服务
             f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();
@@ -60,6 +70,7 @@ public class DiscardServer {
         } else {
             port = 8888;
         }
-        new DiscardServer(port).run();
+        System.out.println("start");
+        new HttpServer(port).run();
     }
 }

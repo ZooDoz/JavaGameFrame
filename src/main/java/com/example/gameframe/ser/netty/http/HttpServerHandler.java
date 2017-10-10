@@ -1,4 +1,4 @@
-package com.example.gameframe.net.netty.http;
+package com.example.gameframe.ser.netty.http;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;

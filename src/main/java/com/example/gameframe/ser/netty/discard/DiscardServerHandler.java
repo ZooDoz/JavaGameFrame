@@ -1,4 +1,4 @@
-package com.example.gameframe.net.netty.discard;
+package com.example.gameframe.ser.netty.discard;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
