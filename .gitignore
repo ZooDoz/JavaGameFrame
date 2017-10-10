@@ -12,6 +12,7 @@ yarn.lock
 
 .project
 .classpath
+.vscode
 /target
 
 
