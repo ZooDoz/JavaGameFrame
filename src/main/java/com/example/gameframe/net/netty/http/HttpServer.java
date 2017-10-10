@@ -10,6 +10,14 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+/**
+ * http有丰富的引擎，
+ * 例如spring mvc的数据解析和注入已经非常丰富了，
+ * 不需要这样的net层来管理请求和处理数据
+ * 
+ * @author zoodoz
+ *
+ */
 public class HttpServer {
     
     private int port;

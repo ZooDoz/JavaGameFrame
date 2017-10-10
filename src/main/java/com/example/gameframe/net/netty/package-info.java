@@ -1,5 +1,6 @@
 /**
- * netty 的实现
+ * netty的demo
+ * 和具体的引擎无关
  */
 /**
  * @author zoodoz

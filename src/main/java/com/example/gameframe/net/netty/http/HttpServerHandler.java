@@ -30,7 +30,8 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object>
             System.out.println("Uri:" + uri);
 		}
 		//http长连接
-        if (msg instanceof HttpContent) {
+        if (msg instanceof HttpContent)
+        {
             HttpContent content = (HttpContent) msg;
             ByteBuf buf = content.content();
             System.out.println(buf.toString(io.netty.util.CharsetUtil.UTF_8));
