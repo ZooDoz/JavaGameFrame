@@ -5,4 +5,4 @@
  * @author zoodoz
  *
  */
-package com.example.gameframe.env;
+package com.example.gameframe.game.env;
