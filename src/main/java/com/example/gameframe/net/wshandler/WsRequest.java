@@ -1,4 +1,4 @@
-package com.example.gameframe.ser.wshandler;
+package com.example.gameframe.net.wshandler;
 
 import com.example.gameframe.ser.ctx.Request;
 
