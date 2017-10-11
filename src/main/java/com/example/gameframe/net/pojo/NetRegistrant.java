@@ -6,7 +6,7 @@ package com.example.gameframe.net.pojo;
  * @author zoodoz
  *
  */
-public class NetRegister 
+public class NetRegistrant 
 {
 	/**
 	 * 唯一标识
@@ -37,7 +37,7 @@ public class NetRegister
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		NetRegister other = (NetRegister) obj;
+		NetRegistrant other = (NetRegistrant) obj;
 		if (t == null) {
 			if (other.t != null)
 				return false;
