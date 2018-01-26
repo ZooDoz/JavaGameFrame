@@ -1,14 +1,16 @@
 package com.example.gameframe.ser.ctx;
 
-public class AbstractContext <Rq extends Request , Rp extends Response> implements Context 
+public class AbstractContext <Si extends Session , Rq extends Request , Rp extends Response> implements Context 
 {
+	private Si session;
 	private Rq request;
 	private Rp response;
 	
-	public AbstractContext(Rq rq , Rp rp)
+	public AbstractContext(Si si, Rq rq , Rp rp)
 	{
 		this.request = rq;
 		this.response = rp;
+		this.session = si;
 	}
 	
 	public Rq getRequest() {
@@ -22,5 +24,11 @@ public class AbstractContext <Rq extends Request , Rp extends Response> implemen
 	}
 	public void setResponse(Rp response) {
 		this.response = response;
+	}
+	public Si getSession() {
+		return session;
+	}
+	public void setSession(Si session) {
+		this.session = session;
 	}
 }

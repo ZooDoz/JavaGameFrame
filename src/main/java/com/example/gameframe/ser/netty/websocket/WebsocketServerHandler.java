@@ -9,7 +9,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -28,10 +27,16 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
-
-public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object> 
+/**
+ * 每一个请求都会生成一个handler
+ * @author zoodoz
+ *
+ */
+public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 {
 	private WebSocketServerHandshaker handshaker;
+	private WsSession si;
+	private WsHandlerAdapter wsHandlerAdapter;
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception 
 	{
@@ -66,19 +71,30 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		}
 		else if (null != req.headers() && null != req.headers().get(CONNECTION) && req.headers().get(CONNECTION).contains(UPGRADE))
 		{// Handshake
-			if (null == this.handshaker)
-			{
-				String location = "ws://" + req.headers().get(HOST) + "/ws";
-				WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(location, null, true);
-				this.handshaker = wsFactory.newHandshaker(req);
-			}
-			if (this.handshaker == null) 
-			{
-				WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
-			} 
+			WsRequest rq = new WsRequest();
+			this.si = (WsSession) this.wsHandlerAdapter.verify(rq);
+			System.out.println("http " + this.si.toString());
+			if(this.si == null)
+				sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED));
 			else 
 			{
-				this.handshaker.handshake(ctx.channel(), req);
+				if (null == this.handshaker)
+				{
+					String location = "ws://" + req.headers().get(HOST) + "/ws";
+					System.out.println(location);
+					WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(location, null, true);
+					this.handshaker = wsFactory.newHandshaker(req);
+					this.wsHandlerAdapter.register(si, ctx);
+				}
+				
+				if (this.handshaker == null) 
+				{
+					WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
+				} 
+				else 
+				{
+					this.handshaker.handshake(ctx.channel(), req);
+				}
 			}
 		} 
 		else 
@@ -99,13 +115,15 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 			return;
 		}
 		else if(frame instanceof PongWebSocketFrame)
-		{//接收到来自客户端的pong，去掉ping标志位
+		{
+			return;
 		}
 		else if(frame instanceof TextWebSocketFrame)
-		{// Send the uppercase string back.
-			
-			String json = ((TextWebSocketFrame) frame).text();
-			System.out.println(json);
+		{	
+			WsRequest wrq = new WsRequest();
+			WsResponse wrp = new WsResponse();
+			WsContext wc = new WsContext(this.si , wrq, wrp);
+			this.wsHandlerAdapter.handler(wc);
 		}
 		else
 		{
@@ -129,5 +147,8 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		{
 			f.addListener(ChannelFutureListener.CLOSE);
 		}
+	}
+	public void setWsHandlerAdapter(WsHandlerAdapter wsHandlerAdapter) {
+		this.wsHandlerAdapter = wsHandlerAdapter;
 	}
 }

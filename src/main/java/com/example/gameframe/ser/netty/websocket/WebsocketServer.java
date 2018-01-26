@@ -14,9 +14,11 @@ import io.netty.handler.codec.http.HttpServerCodec;
 public class WebsocketServer {
     
     private int port;
+    private WsHandlerAdapter wsHandlerAdapter;
     
-    public WebsocketServer(int port) {
+    public WebsocketServer(int port , WsHandlerAdapter wsh) {
         this.port = port;
+        this.wsHandlerAdapter = wsh;
     }
     
     public void run() throws Exception {
@@ -37,7 +39,10 @@ public class WebsocketServer {
                                     //设置请求长度
                                     ch.pipeline().addLast(new HttpObjectAggregator(65536));
                                     //放入请求处理器
-                                    ch.pipeline().addLast(new WebsocketServerHandler());
+                                    WebsocketServerHandler wssh = new WebsocketServerHandler();
+                                    //TODO 不应该new
+                                    wssh.setWsHandlerAdapter(wsHandlerAdapter);
+                                    ch.pipeline().addLast(wssh);
                                 }
                             })
              .option(ChannelOption.SO_BACKLOG, 128)         
@@ -54,16 +59,5 @@ public class WebsocketServer {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
-    }
-    
-    public static void main(String[] args) throws Exception {
-        int port;
-        if (args.length > 0) {
-            port = Integer.parseInt(args[0]);
-        } else {
-            port = 8888;
-        }
-        System.out.println("start");
-        new WebsocketServer(port).run();
     }
 }

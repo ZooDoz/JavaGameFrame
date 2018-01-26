@@ -1,4 +1,4 @@
-package com.example.gameframe.net.wshandler;
+package com.example.gameframe.ser.netty.websocket;
 
 import com.example.gameframe.ser.ctx.Request;
 
