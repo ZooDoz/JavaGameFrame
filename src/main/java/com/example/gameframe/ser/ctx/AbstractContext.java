@@ -1,6 +1,6 @@
 package com.example.gameframe.ser.ctx;
 
-public class AbstractContext <Si extends Session , Rq extends Request , Rp extends Response> implements Context 
+public abstract class AbstractContext <Si extends Session , Rq extends Request , Rp extends Response> implements Context 
 {
 	private Si session;
 	private Rq request;

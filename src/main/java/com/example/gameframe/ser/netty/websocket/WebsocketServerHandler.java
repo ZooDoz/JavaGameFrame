@@ -35,7 +35,6 @@ import io.netty.util.CharsetUtil;
 public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 {
 	private WebSocketServerHandshaker handshaker;
-	private WsSession si;
 	private WsHandlerAdapter wsHandlerAdapter;
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception 
@@ -71,10 +70,8 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		}
 		else if (null != req.headers() && null != req.headers().get(CONNECTION) && req.headers().get(CONNECTION).contains(UPGRADE))
 		{// Handshake
-			WsRequest rq = new WsRequest();
-			this.si = (WsSession) this.wsHandlerAdapter.verify(rq);
-			System.out.println("http " + this.si.toString());
-			if(this.si == null)
+			Boolean verify = this.wsHandlerAdapter.verify(req);
+			if(!verify)
 				sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED));
 			else 
 			{
@@ -84,7 +81,6 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 					System.out.println(location);
 					WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(location, null, true);
 					this.handshaker = wsFactory.newHandshaker(req);
-					this.wsHandlerAdapter.register(si, ctx);
 				}
 				
 				if (this.handshaker == null) 
@@ -120,10 +116,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		}
 		else if(frame instanceof TextWebSocketFrame)
 		{	
-			WsRequest wrq = new WsRequest();
-			WsResponse wrp = new WsResponse();
-			WsContext wc = new WsContext(this.si , wrq, wrp);
-			this.wsHandlerAdapter.handler(wc);
+			this.wsHandlerAdapter.handler((TextWebSocketFrame)frame);
 		}
 		else
 		{

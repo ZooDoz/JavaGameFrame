@@ -1,12 +1,10 @@
 package com.example.gameframe.ser.netty.websocket;
 
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
-import com.example.gameframe.ser.handler.NetHandler;
-
-public abstract class WsHandlerAdapter implements NetHandler<WsContext>
+public abstract class WsHandlerAdapter
 {
-	public abstract WsSession verify(WsRequest rq);
-	public abstract void register(WsSession si , ChannelHandlerContext ctx);
-	public abstract void handler(WsContext ctx);
+	public abstract boolean verify(FullHttpRequest rq);
+	public abstract void handler(TextWebSocketFrame rq);
 }

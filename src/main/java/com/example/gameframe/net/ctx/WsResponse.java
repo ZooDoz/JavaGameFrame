@@ -1,4 +1,4 @@
-package com.example.gameframe.ser.netty.websocket;
+package com.example.gameframe.net.ctx;
 
 import com.example.gameframe.ser.ctx.Response;
 
