@@ -1,6 +1,6 @@
 package com.example.gameframe.net.ctx;
 
-import com.example.gameframe.ser.ctx.Session;
+import com.example.gameframe.ctx.Session;
 
 public class WsSession implements Session 
 {

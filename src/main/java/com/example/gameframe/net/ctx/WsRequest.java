@@ -1,6 +1,6 @@
 package com.example.gameframe.net.ctx;
 
-import com.example.gameframe.ser.ctx.Request;
+import com.example.gameframe.ctx.Request;
 
 public class WsRequest implements Request
 {

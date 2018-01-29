@@ -1,6 +1,6 @@
 package com.example.gameframe.net.ctx;
 
-import com.example.gameframe.ser.ctx.AbstractContext;
+import com.example.gameframe.ctx.AbstractContext;
 
 public class WsContext extends AbstractContext<WsSession , WsRequest , WsResponse>
 {

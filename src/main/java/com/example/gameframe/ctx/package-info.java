@@ -5,4 +5,4 @@
  * @author zoodoz
  *
  */
-package com.example.gameframe.ser.ctx;
+package com.example.gameframe.ctx;

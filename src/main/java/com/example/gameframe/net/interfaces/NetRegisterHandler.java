@@ -1,7 +1,7 @@
 package com.example.gameframe.net.interfaces;
 
+import com.example.gameframe.ctx.Request;
 import com.example.gameframe.net.pojo.NetRegistrant;
-import com.example.gameframe.ser.ctx.Request;
 /**
  * 注册器，返回一个注册实例
  * @author zoodoz
