@@ -9,6 +9,11 @@ import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
+import java.util.UUID;
+
+import org.apache.commons.lang.StringUtils;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -36,6 +41,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 {
 	private WebSocketServerHandshaker handshaker;
 	private WsHandlerAdapter wsHandlerAdapter;
+	private WssSession wsssi;
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception 
 	{
@@ -70,7 +76,18 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		}
 		else if (null != req.headers() && null != req.headers().get(CONNECTION) && req.headers().get(CONNECTION).contains(UPGRADE))
 		{// Handshake
-			Boolean verify = this.wsHandlerAdapter.verify(req);
+			//设置上下文id
+			WssSession wsssi = new WssSession();
+			wsssi.setId(UUID.randomUUID().toString());
+			//设置请求
+			WssRequest wssrq = new WssRequest();
+			wssrq.setRq(req);
+			
+			WssResponse wssrp = new WssResponse();
+			WssContext wssctx = new WssContext(wsssi, wssrq, wssrp);
+			
+			
+			Boolean verify = this.wsHandlerAdapter.verify(wssctx);
 			if(!verify)
 				sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED));
 			else 
@@ -89,6 +106,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 				} 
 				else 
 				{
+					this.wsssi = wsssi;
 					this.handshaker.handshake(ctx.channel(), req);
 				}
 			}
@@ -98,6 +116,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 			sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED));
 		}
 	}
+	
 	private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame)
 	{
 		if (frame instanceof CloseWebSocketFrame)
@@ -116,7 +135,19 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		}
 		else if(frame instanceof TextWebSocketFrame)
 		{	
-			this.wsHandlerAdapter.handler((TextWebSocketFrame)frame);
+			//设置请求
+			WssRequest wssrq = new WssRequest();
+			wssrq.setRq(frame);
+			
+			WssResponse wssrp = new WssResponse();
+			WssContext wssctx = new WssContext(this.wsssi, wssrq, wssrp);
+			
+			this.wsHandlerAdapter.handler(wssctx);
+			
+			String json = wssrp.getJson();
+			if(StringUtils.isNotBlank(json))
+				ctx.writeAndFlush(json);
+				
 		}
 		else
 		{

@@ -5,12 +5,23 @@ public abstract class AbstractContext <Si extends Session , Rq extends Request ,
 	private Si session;
 	private Rq request;
 	private Rp response;
+	/**
+	 * 原始的ctx
+	 */
+	private AbstractContext<AbstractSession , AbstractRequest , AbstractResponse> ctx;
+	
 	
 	public AbstractContext(Si si, Rq rq , Rp rp)
 	{
 		this.request = rq;
 		this.response = rp;
 		this.session = si;
+	}
+	
+	public AbstractContext(Si si, Rq rq , Rp rp , AbstractContext<AbstractSession , AbstractRequest , AbstractResponse> ctx)
+	{
+		this(si, rq, rp);
+		this.ctx = ctx;
 	}
 	
 	public Rq getRequest() {
@@ -30,5 +41,14 @@ public abstract class AbstractContext <Si extends Session , Rq extends Request ,
 	}
 	public void setSession(Si session) {
 		this.session = session;
+	}
+
+	public AbstractContext<AbstractSession, AbstractRequest, AbstractResponse> getCtx() {
+		return ctx;
+	}
+
+	public void setCtx(
+			AbstractContext<AbstractSession, AbstractRequest, AbstractResponse> ctx) {
+		this.ctx = ctx;
 	}
 }
