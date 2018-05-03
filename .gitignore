@@ -14,14 +14,6 @@ yarn.lock
 .classpath
 .vscode
 /target
+.idea
+*.iml
 
-
-npm-debug.log*
-
-# Ignore everything in dist folder except for eslint config
-/dist/*
-!/dist/.eslintrc.json
-
-/node_modules
-
-/test/node_smoke_tests/lib/ensure_iterability.js
