@@ -11,10 +11,13 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 
+import java.util.UUID;
+
 public class WebsocketServer {
     
     private int port;
     private WsHandlerAdapter wsHandlerAdapter;
+    private WssContext WssContext;
     
     public WebsocketServer(int port , WsHandlerAdapter wsh) {
         this.port = port;
@@ -38,11 +41,13 @@ public class WebsocketServer {
                                     ch.pipeline().addLast(new HttpServerCodec());
                                     //设置请求长度
                                     ch.pipeline().addLast(new HttpObjectAggregator(65536));
+                                    //设置session
+                                    WssSession wssi = new WssSession(UUID.randomUUID().toString());
                                     //放入请求处理器
-                                    WebsocketServerHandler wssh = new WebsocketServerHandler();
-                                    //TODO 不应该new
-                                    wssh.setWsHandlerAdapter(wsHandlerAdapter);
-                                    ch.pipeline().addLast(wssh);
+                                    //利用net层的处理器，初始化请求处理器
+                                    //来对请求处理器提供服务
+                                    //加入处理器
+                                    ch.pipeline().addLast(new WebsocketServerHandler(wsHandlerAdapter , wssi));
                                 }
                             })
              .option(ChannelOption.SO_BACKLOG, 128)         

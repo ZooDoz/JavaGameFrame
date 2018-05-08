@@ -1,12 +1,23 @@
 package com.example.gameframe.ctx;
 
+/**
+ * session
+ */
 public abstract class AbstractSession implements Session
 {
+
+
 	private String id;
 	/**
 	 * 原始的si
 	 */
 	private AbstractSession si;
+
+	public AbstractSession(String id)
+	{
+		this.id = id;
+		this.si = this;
+	}
 
 	public String getId() {
 		return id;

@@ -1,5 +1,8 @@
 package com.example.gameframe.ctx;
 
+/**
+ * 请求的session
+ */
 public abstract class AbstractRequest implements Request
 {
 	/**

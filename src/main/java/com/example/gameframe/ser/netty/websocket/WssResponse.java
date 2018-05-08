@@ -10,7 +10,7 @@ public class WssResponse extends AbstractResponse
 	/**
 	 * 响应其他session的数据
 	 */
-	private Map<WssSession , String> ress;
+	private Map<String , String> ress;
 
 	public String getJson() {
 		return json;
@@ -20,11 +20,11 @@ public class WssResponse extends AbstractResponse
 		this.json = json;
 	}
 
-	public Map<WssSession , String> getRess() {
+	public Map<String , String> getRess() {
 		return ress;
 	}
 
-	public void setRess(Map<WssSession , String> ress) {
+	public void setRess(Map<String , String> ress) {
 		this.ress = ress;
 	}
 }

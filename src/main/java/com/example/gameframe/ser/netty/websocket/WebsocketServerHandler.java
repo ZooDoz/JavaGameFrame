@@ -39,9 +39,16 @@ import io.netty.util.CharsetUtil;
  */
 public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 {
-	private WebSocketServerHandshaker handshaker;
 	private WsHandlerAdapter wsHandlerAdapter;
+    private WssContext wssContext;
 	private WssSession wsssi;
+
+	public WebsocketServerHandler(WsHandlerAdapter wsHandlerAdapter , WssContext wssContext , WssSession wsssi) {
+		this.wsHandlerAdapter = wsHandlerAdapter;
+		this.wssContext = wssContext;
+		this.wsssi = wsssi;
+	}
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception 
 	{
@@ -76,39 +83,32 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		}
 		else if (null != req.headers() && null != req.headers().get(CONNECTION) && req.headers().get(CONNECTION).contains(UPGRADE))
 		{// Handshake
-			//设置上下文id
-			WssSession wsssi = new WssSession();
-			wsssi.setId(UUID.randomUUID().toString());
 			//设置请求
 			WssRequest wssrq = new WssRequest();
 			wssrq.setRq(req);
-			
+			//设置响应
 			WssResponse wssrp = new WssResponse();
-			WssContext wssctx = new WssContext(wsssi, wssrq, wssrp);
-			
-			
-			Boolean verify = this.wsHandlerAdapter.verify(wssctx);
+			//调用适配器校验登录态
+			Boolean verify = this.wsHandlerAdapter.verify(this.wsssi , wssrq);
 			if(!verify)
 				sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED));
 			else 
 			{
-				if (null == this.handshaker)
+			    //创建握手对象
+				if (null == this.wsssi.getHandshaker())
 				{
 					String location = "ws://" + req.headers().get(HOST) + "/ws";
-					System.out.println(location);
 					WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(location, null, true);
-					this.handshaker = wsFactory.newHandshaker(req);
+					this.wsssi.setHandshaker(wsFactory.newHandshaker(req));
 				}
-				
-				if (this.handshaker == null) 
-				{
+				//处理握手
+				if (null == this.wsssi.getHandshaker())
 					WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
-				} 
-				else 
-				{
-					this.wsssi = wsssi;
-					this.handshaker.handshake(ctx.channel(), req);
-				}
+				else
+					this.wsssi.getHandshaker().handshake(ctx.channel(), req);
+
+                this.wsssi.setChannel(ctx.channel());
+				this.wssContext.addSession(wsssi);
 			}
 		} 
 		else 
@@ -121,7 +121,9 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 	{
 		if (frame instanceof CloseWebSocketFrame)
 		{
-			this.handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+		    //关闭握手
+			this.wsssi.getHandshaker().close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+            this.wssContext.removeSession(this.wsssi);
 			return;
 		}
 		else if (frame instanceof PingWebSocketFrame)
@@ -140,9 +142,8 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 			wssrq.setRq(frame);
 			
 			WssResponse wssrp = new WssResponse();
-			WssContext wssctx = new WssContext(this.wsssi, wssrq, wssrp);
 			
-			this.wsHandlerAdapter.handler(wssctx);
+			this.wsHandlerAdapter.handler(this.wsssi , wssrq , wssrp);
 			
 			String json = wssrp.getJson();
 			if(StringUtils.isNotBlank(json))
@@ -154,6 +155,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 			throw new UnsupportedOperationException(String.format("%s frame types not supported", frame.getClass().getName()));
 		}
 	}
+
 	private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse res)
 	{
 		// Generate an error page if response getStatus code is not OK (200).
@@ -171,8 +173,5 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		{
 			f.addListener(ChannelFutureListener.CLOSE);
 		}
-	}
-	public void setWsHandlerAdapter(WsHandlerAdapter wsHandlerAdapter) {
-		this.wsHandlerAdapter = wsHandlerAdapter;
 	}
 }
