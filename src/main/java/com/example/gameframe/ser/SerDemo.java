@@ -1,7 +1,8 @@
 package com.example.gameframe.ser;
 
-import com.example.gameframe.net.wshandler.WsHandlerAdapterHandler;
+import com.example.gameframe.net.wshandler.WsNetHandler;
 import com.example.gameframe.ser.netty.websocket.WebsocketServer;
+import com.example.gameframe.ser.netty.websocket.WsHandler;
 
 public class SerDemo 
 {
@@ -15,7 +16,7 @@ public class SerDemo
             port = 8181;
         }
         System.out.println("start");
-        WsHandlerAdapterHandler wsh = new WsHandlerAdapterHandler();
+        WsNetHandler wsh = new WsNetHandler();
         new WebsocketServer(port , wsh).run();
     }
 }

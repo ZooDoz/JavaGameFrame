@@ -10,9 +10,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -29,7 +27,6 @@ import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 /**
@@ -39,12 +36,12 @@ import io.netty.util.CharsetUtil;
  */
 public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 {
-	private WsHandlerAdapter wsHandlerAdapter;
+	private WsHandler wsHandler;
     private WssContext wssContext;
 	private WssSession wsssi;
 
-	public WebsocketServerHandler(WsHandlerAdapter wsHandlerAdapter , WssContext wssContext , WssSession wsssi) {
-		this.wsHandlerAdapter = wsHandlerAdapter;
+	public WebsocketServerHandler(WsHandler wsHandler , WssContext wssContext , WssSession wsssi) {
+		this.wsHandler = wsHandler;
 		this.wssContext = wssContext;
 		this.wsssi = wsssi;
 	}
@@ -85,11 +82,12 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		{// Handshake
 			//设置请求
 			WssRequest wssrq = new WssRequest();
-			wssrq.setRq(req);
+			wssrq.setSid(this.wsssi.getId());
+			wssrq.setOrq(req);
 			//设置响应
 			WssResponse wssrp = new WssResponse();
 			//调用适配器校验登录态
-			Boolean verify = this.wsHandlerAdapter.verify(this.wsssi , wssrq);
+			Boolean verify = this.wsHandler.verify(wssrq , wssrp);
 			if(!verify)
 				sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED));
 			else 
@@ -139,16 +137,15 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		{	
 			//设置请求
 			WssRequest wssrq = new WssRequest();
-			wssrq.setRq(frame);
+			wssrq.setOrq(frame);
+			wssrq.setSid(this.wsssi.getId());
 			
 			WssResponse wssrp = new WssResponse();
 			
-			this.wsHandlerAdapter.handler(this.wsssi , wssrq , wssrp);
-			
-			String json = wssrp.getJson();
-			if(StringUtils.isNotBlank(json))
-				ctx.writeAndFlush(json);
-				
+			this.wsHandler.handle(wssrq , wssrp);
+
+			for(Map.Entry<String , String> entry : wssrp.getRess().entrySet())
+				wssContext.getSession(entry.getKey()).getChannel().writeAndFlush(entry.getKey());
 		}
 		else
 		{

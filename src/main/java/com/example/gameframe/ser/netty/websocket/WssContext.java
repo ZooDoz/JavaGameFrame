@@ -2,10 +2,14 @@ package com.example.gameframe.ser.netty.websocket;
 
 import com.example.gameframe.ctx.AbstractContext;
 
+/**
+ * 存储连接的容器
+ * 管理所有活跃连接，可以推送到client
+ */
 public class WssContext extends AbstractContext<WssSession>
 {
 
-	public WssContext()
+	WssContext()
 	{
 		super();
 	}

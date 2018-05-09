@@ -6,16 +6,27 @@ package com.example.gameframe.ctx;
 public abstract class AbstractRequest implements Request
 {
 	/**
-	 * 原始的rq对象
+	 * 传递来自上层的唯一标识
 	 */
-	protected Object rq;
+	protected String sid;
+	/**
+	 * 原始的请求对象
 
-	public Object getRq() {
-		return rq;
+	 */
+	protected Object orq;
+
+	public String getSid() {
+		return sid;
 	}
 
-	public void setRq(Object rq) {
-		this.rq = rq;
+	public void setSid(String sid) {
+		this.sid = sid;
 	}
-	
+	public Object getOrq() {
+		return orq;
+	}
+
+	public void setOrq(Object orq) {
+		this.orq = orq;
+	}
 }

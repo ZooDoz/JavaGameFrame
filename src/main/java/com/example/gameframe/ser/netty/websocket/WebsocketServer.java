@@ -1,5 +1,6 @@
 package com.example.gameframe.ser.netty.websocket;
 
+import com.example.gameframe.net.wshandler.WsNetHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -16,12 +17,14 @@ import java.util.UUID;
 public class WebsocketServer {
     
     private int port;
-    private WsHandlerAdapter wsHandlerAdapter;
-    private WssContext WssContext;
+    private WsHandler wsHandler;
+    private WssContext wssContext;
     
-    public WebsocketServer(int port , WsHandlerAdapter wsh) {
+    public WebsocketServer(int port , WsNetHandler wnsh) {
+
         this.port = port;
-        this.wsHandlerAdapter = wsh;
+        this.wsHandler = new WsHandler(wnsh);
+        this.wssContext = new WssContext();
     }
     
     public void run() throws Exception {
@@ -47,7 +50,7 @@ public class WebsocketServer {
                                     //利用net层的处理器，初始化请求处理器
                                     //来对请求处理器提供服务
                                     //加入处理器
-                                    ch.pipeline().addLast(new WebsocketServerHandler(wsHandlerAdapter , wssi));
+                                    ch.pipeline().addLast(new WebsocketServerHandler(wsHandler , wssContext , wssi));
                                 }
                             })
              .option(ChannelOption.SO_BACKLOG, 128)         

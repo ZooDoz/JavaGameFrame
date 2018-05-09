@@ -11,7 +11,7 @@ public abstract class AbstractContext <Si extends Session> implements Context
 {
 	protected ConcurrentHashMap<String , Si> ctxSin;
 
-	public AbstractContext()
+	protected AbstractContext()
 	{
 		this.ctxSin = new ConcurrentHashMap<String, Si>();;
 	}

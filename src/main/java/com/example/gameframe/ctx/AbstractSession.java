@@ -6,17 +6,11 @@ package com.example.gameframe.ctx;
 public abstract class AbstractSession implements Session
 {
 
-
 	private String id;
-	/**
-	 * 原始的si
-	 */
-	private AbstractSession si;
 
 	public AbstractSession(String id)
 	{
 		this.id = id;
-		this.si = this;
 	}
 
 	public String getId() {
@@ -50,13 +44,5 @@ public abstract class AbstractSession implements Session
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	public AbstractSession getSi() {
-		return si;
-	}
-
-	public void setSi(AbstractSession si) {
-		this.si = si;
 	}
 }

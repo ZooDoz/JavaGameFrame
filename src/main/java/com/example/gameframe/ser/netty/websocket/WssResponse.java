@@ -6,19 +6,10 @@ import com.example.gameframe.ctx.AbstractResponse;
 
 public class WssResponse extends AbstractResponse
 {
-	private String json;
 	/**
-	 * 响应其他session的数据
+	 * 响应session的数据
 	 */
 	private Map<String , String> ress;
-
-	public String getJson() {
-		return json;
-	}
-
-	public void setJson(String json) {
-		this.json = json;
-	}
 
 	public Map<String , String> getRess() {
 		return ress;

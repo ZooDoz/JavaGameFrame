@@ -20,24 +20,24 @@ public class WssSession extends AbstractSession
     private Channel channel;
 
 
-    public WssSession(String id)
+    WssSession(String id)
     {
         super(id);
     }
 
-    public Channel getChannel() {
+    Channel getChannel() {
         return channel;
 
     }
-    public void setChannel(Channel channel) {
+    void setChannel(Channel channel) {
         this.channel = channel;
     }
 
-    public WebSocketServerHandshaker getHandshaker() {
+    WebSocketServerHandshaker getHandshaker() {
         return handshaker;
     }
 
-    public void setHandshaker(WebSocketServerHandshaker handshaker) {
+    void setHandshaker(WebSocketServerHandshaker handshaker) {
         this.handshaker = handshaker;
     }
 

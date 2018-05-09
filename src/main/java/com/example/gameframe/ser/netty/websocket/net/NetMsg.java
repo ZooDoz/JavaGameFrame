@@ -1,4 +1,4 @@
-package com.example.gameframe.net.pojo;
+package com.example.gameframe.ser.netty.websocket.net;
 
 import java.util.Map;
 /**
