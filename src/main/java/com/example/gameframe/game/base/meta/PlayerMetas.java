@@ -1,4 +1,4 @@
-package com.example.gameframe.game.player.base;
+package com.example.gameframe.game.base.meta;
 
 import java.util.Map;
 

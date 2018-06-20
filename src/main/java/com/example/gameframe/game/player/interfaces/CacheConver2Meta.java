@@ -1,6 +1,6 @@
 package com.example.gameframe.game.player.interfaces;
 
-import com.example.gameframe.game.player.base.PlayerBaseMeta;
+import com.example.gameframe.game.base.meta.PlayerBaseMeta;
 
 /**
  * 每个模块都需要实现
