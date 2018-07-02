@@ -5,7 +5,13 @@
 	<groupId>com.example</groupId>
 	<artifactId>gameframe</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<modules>
+		<module>gameframe-ser</module>
+		<module>gameframe-net</module>
+		<module>gameframe-game</module>
+		<module>gameframe-context</module>
+	</modules>
+	<packaging>pom</packaging>
 
 	<name>JavaGameFrame</name>
 	<url>http://zoodoz.cn</url>
