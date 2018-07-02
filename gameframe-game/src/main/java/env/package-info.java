@@ -5,4 +5,4 @@
  * @author zoodoz
  *
  */
-package game.env;
+package env;

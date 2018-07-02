@@ -10,7 +10,8 @@
 		<module>gameframe-net</module>
 		<module>gameframe-game</module>
 		<module>gameframe-context</module>
-	</modules>
+        <module>gameframe-evn</module>
+    </modules>
 	<packaging>pom</packaging>
 
 	<name>JavaGameFrame</name>

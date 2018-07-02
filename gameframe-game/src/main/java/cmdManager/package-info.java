@@ -5,4 +5,4 @@
  * @author zoodoz
  *
  */
-package game.cmdManager;
+package cmdManager;
