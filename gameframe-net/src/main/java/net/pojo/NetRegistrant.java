@@ -6,12 +6,17 @@ package net.pojo;
  * @author zoodoz
  *
  */
-public class NetRegistrant 
+public class NetRegistrant <E extends NetRegistEvn>
 {
 	/**
 	 * 唯一标识
 	 */
 	private String t;
+
+	/**
+	 * 注册者的evn
+	 */
+	private E evn;
 
 	public String getT() {
 		return t;
@@ -19,6 +24,14 @@ public class NetRegistrant
 
 	public void setT(String t) {
 		this.t = t;
+	}
+
+	public E getEvn() {
+		return evn;
+	}
+
+	public void setEvn(E evn) {
+		this.evn = evn;
 	}
 
 	@Override

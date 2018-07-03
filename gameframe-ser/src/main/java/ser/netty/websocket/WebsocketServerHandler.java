@@ -82,7 +82,6 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		{// Handshake
 			//设置请求
 			WssRequest wssrq = new WssRequest();
-			wssrq.setSid(this.wsssi.getId());
 			wssrq.setOrq(req);
 			//设置响应
 			WssResponse wssrp = new WssResponse();
@@ -106,6 +105,8 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 					this.wsssi.getHandshaker().handshake(ctx.channel(), req);
 
                 this.wsssi.setChannel(ctx.channel());
+                //成功后更新si的id
+                wsssi.setId(wssrq.getSid());
 				this.wssContext.addSession(wsssi);
 			}
 		} 
@@ -138,10 +139,10 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 			//设置请求
 			WssRequest wssrq = new WssRequest();
 			wssrq.setOrq(frame);
+			//设置当前缓存的唯一id
 			wssrq.setSid(this.wsssi.getId());
-			
 			WssResponse wssrp = new WssResponse();
-			
+			//处理请求
 			this.wsHandler.handle(wssrq , wssrp);
 
 			for(Map.Entry<String , String> entry : wssrp.getRess().entrySet())
