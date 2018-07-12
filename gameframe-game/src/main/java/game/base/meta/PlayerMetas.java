@@ -1,5 +1,7 @@
 package game.base.meta;
 
+import evn.pojo.Evn;
+
 import java.util.Map;
 
 /**
@@ -13,6 +15,10 @@ public class PlayerMetas
 	 * 唯一标识
 	 */
 	private String pid;
+	/**
+	 * 玩家的环境
+	 */
+	private Evn e;
 	/**
 	 * 元数据集合
 	 */

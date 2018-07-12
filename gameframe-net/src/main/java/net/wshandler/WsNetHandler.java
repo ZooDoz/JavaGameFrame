@@ -4,6 +4,7 @@ import net.ctx.NetContext;
 import net.ctx.NetRequest;
 import net.ctx.NetResponse;
 import net.ctx.NetSession;
+import net.interfaces.EvnLoadHandler;
 import net.interfaces.NetMethodHandler;
 import net.interfaces.NetRegisterHandler;
 import net.pojo.NetRegistrant;
@@ -25,20 +26,23 @@ public class WsNetHandler implements NetHandler
     private NetContext netContext;
 	private NetRegisterHandler netRegisterHandler;
 	private NetMethodHandler netMethodHandler;
+	private EvnLoadHandler evnLoadHandler;
 
 	public boolean verify(WssRequest req, WssResponse resp)
     {
         NetRequest nreq = new NetRequest();
+        nreq.setOrq(req);
         NetResponse nresp = new NetResponse();
-        if(this.netRegisterHandler.registCheck(nreq , nresp))
+        nresp.setOrp(resp);
+        if(this.evnLoadHandler.evnCheck(nreq , nresp))
         {
             //注册玩家
             NetRegistrant r = this.netRegisterHandler.register(nreq , nresp);
-            NetSession nssio = new NetSession();
-            nssio.setR(r);
+            nreq.setSid(r.getId());
+            NetSession nssio = new NetSession(nreq.getSid(), r);
             this.netContext.addSession(nssio);
             //设置当前用户的sid
-            req.setSid(r.getT());
+            req.setSid(r.getId());
         }
 	    return false;
     }

@@ -1,8 +1,9 @@
 package net.ctx;
 
-import ctx.Response;
+import ctx.AbstractResponse;
+import ser.netty.websocket.WssResponse;
 
-public class NetResponse implements Response
+public class NetResponse extends AbstractResponse<WssResponse>
 {
 
 }

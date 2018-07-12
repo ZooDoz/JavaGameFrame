@@ -10,19 +10,19 @@ public class NetContext extends AbstractContext<NetSession>
         super();
     }
 
-    public NetSession getSession(String wssId)
+    public NetSession getSession(String id)
     {
-        return this.ctxSin.get(wssId);
+        return this.ctxSin.get(id);
     }
 
     public void addSession(NetSession si)
     {
-        this.ctxSin.put(si.getWssId() , si);
+        this.ctxSin.put(si.getId() , si);
     }
 
     public void removeSession(NetSession si)
     {
-        this.ctxSin.remove(si.getWssId());
+        this.ctxSin.remove(si.getId());
     }
 }
 

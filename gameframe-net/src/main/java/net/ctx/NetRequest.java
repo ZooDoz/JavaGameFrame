@@ -1,8 +1,9 @@
 package net.ctx;
 
-import ctx.Request;
+import ctx.AbstractRequest;
+import ser.netty.websocket.WssRequest;
 
-public class NetRequest implements Request
+public class NetRequest extends AbstractRequest<WssRequest>
 {
 	private NetSession ws;
 

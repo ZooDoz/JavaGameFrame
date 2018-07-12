@@ -24,7 +24,7 @@ public class WsHandler
 
     void handle(WssRequest req, WssResponse resp)
     {
-        this.netMsgAnalyzeHandler.analyzeReq(req);
+        this.netMsgAnalyzeHandler.analyzeMsg(req);
         this.netHandler.handle(req,resp);
     }
 

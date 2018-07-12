@@ -11,19 +11,19 @@ public class NetRegistrant <E extends NetRegistEvn>
 	/**
 	 * 唯一标识
 	 */
-	private String t;
+	private String id;
 
 	/**
 	 * 注册者的evn
 	 */
 	private E evn;
 
-	public String getT() {
-		return t;
+	public String getId() {
+		return id;
 	}
 
-	public void setT(String t) {
-		this.t = t;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public E getEvn() {
@@ -35,27 +35,20 @@ public class NetRegistrant <E extends NetRegistEvn>
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((t == null) ? 0 : t.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof NetRegistrant)) return false;
+
+		NetRegistrant<?> that = (NetRegistrant<?>) o;
+
+		if (id != null ? !id.equals(that.id) : that.id != null) return false;
+		return evn != null ? evn.equals(that.evn) : that.evn == null;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		NetRegistrant other = (NetRegistrant) obj;
-		if (t == null) {
-			if (other.t != null)
-				return false;
-		} else if (!t.equals(other.t))
-			return false;
-		return true;
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (evn != null ? evn.hashCode() : 0);
+		return result;
 	}
 }
