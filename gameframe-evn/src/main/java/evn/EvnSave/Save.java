@@ -9,13 +9,12 @@ import java.util.Map;
 /**
  * @author zoodoz
  * create date 2018/7/12
+ * 存储方法
  */
 public interface Save
 {
     boolean add(Evn e , String key, Object data);
-    boolean add(Evn e ,String key, Object data, int cacheSec);
     boolean set(Evn e ,String key, Object data);
-    boolean set(Evn e ,String key, Object data, int cacheSec);
     <T> T get(Evn e ,String key, Class<T> clazz);
     <T> T getReal(Evn e ,String key, Class<T> clazz);
     Long getIncr(Evn e ,String key);
@@ -27,9 +26,8 @@ public interface Save
     boolean exist(Evn e ,String key, Class<?> clazz);
 
     long incr(Evn e ,String key, int num);
-
-    Long expire(Evn e ,String key, int cacheSec);
     Long ttl(Evn e ,String key);
+    Long expire(Evn e , String key, int cacheSec);
 
     boolean hAddReal(Evn e , String name, String key, Object data);
     boolean hSetReal(Evn e ,String name, String key, Object data);
