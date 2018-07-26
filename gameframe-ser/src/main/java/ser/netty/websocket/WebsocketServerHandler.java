@@ -47,7 +47,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception 
+	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception
 	{
 		if(msg instanceof FullHttpRequest)
 		{
@@ -82,7 +82,8 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		{// Handshake
 			//设置请求
 			WssRequest wssrq = new WssRequest();
-			wssrq.setOrq(req);
+			wssrq.setOrq(wssrq);
+			wssrq.setBrq(req);
 			//设置响应
 			WssResponse wssrp = new WssResponse();
 			//调用适配器校验登录态
@@ -138,7 +139,8 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object>
 		{	
 			//设置请求
 			WssRequest wssrq = new WssRequest();
-			wssrq.setOrq(frame);
+			wssrq.setBrq(frame);
+			wssrq.setOrq(wssrq);
 			//设置当前缓存的唯一id
 			wssrq.setSid(this.wsssi.getId());
 			WssResponse wssrp = new WssResponse();

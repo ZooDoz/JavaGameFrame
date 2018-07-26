@@ -16,11 +16,11 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders.Values;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class HttpServerHandler extends SimpleChannelInboundHandler<Object> 
+public class HttpServerHandler extends SimpleChannelInboundHandler<Object>
 {
 	private HttpRequest request;
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception 
+	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception
 	{
 		//普通http请求
 		if (msg instanceof HttpRequest)
