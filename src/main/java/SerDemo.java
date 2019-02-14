@@ -1,4 +1,4 @@
-import net.wshandler.WsNetHandler;
+import net4game.wshandler.WsNetHandler;
 import ser.netty.websocket.WebsocketServer;
 
 public class SerDemo 
